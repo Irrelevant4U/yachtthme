@@ -1,0 +1,668 @@
+[
+    {
+        "type": 1,
+        "title": "Vault - Development Mode",
+        "name": "dev-vault",
+        "description": "Manage secrets and protect sensitive data. Create and secure access to tokens, passwords, certificates, and encryption keys.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/vault-logo.png",
+        "image": "vault:latest",
+        "categories": [
+            "Secrets Manager"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "WebUI": "8200:8200/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/config",
+                "bind": "!config/vault"
+            }
+        ],
+        "cap_add": [
+            "IPC_LOCK"
+        ],
+        "env": [
+            {
+                "name": "VAULT_DEV_ROOT_TOKEN_ID",
+                "label": "VAULT_DEV_ROOT_TOKEN_ID",
+                "description": "This sets the ID of the initial generated root token to the given value",
+                "default": "myroot"
+            },
+            {
+                "name": "VAULT_DEV_LISTEN_ADDRESS",
+                "label": "VAULT_DEV_LISTEN_ADDRESS",
+                "description": "This sets the IP:port of the development server listener (defaults to 0.0.0.0:8200)",
+                "default": "0.0.0.0:8200"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "Vault - Server Mode",
+        "name": "vault",
+        "description": "Manage secrets and protect sensitive data. Create and secure access to tokens, passwords, certificates, and encryption keys.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/vault-logo.png",
+        "image": "vault:latest",
+        "categories": [
+            "Secrets Manager"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "WebUI": "8200:8200/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/vault/config",
+                "bind": "!config/vault/config"
+            },
+            {
+                "container": "/vault/file",
+                "bind": "!data/vault/file"
+            },
+            {
+                "container": "/vault/logs",
+                "bind": "!logs/vault/logs"
+            }
+        ],
+        "cap_add": [
+            "IPC_LOCK"
+        ],
+        "env": [
+            {
+                "name": "VAULT_LOCAL_CONFIG",
+                "label": "VAULT_LOCAL_CONFIG",
+                "description": "This runs a Vault server using the file storage backend at path /vault/file, with a default secret lease duration of one week and a maximum of 30 days.",
+                "default": "{\"listener\": {\"tcp\": {\"address\": \"0.0.0.0:8200\", \"tls_disable\": 1}}, \"backend\": {\"file\": {\"path\": \"/vault/file\"}}, \"api_addr\": \"http://0.0.0.0:8200\", \"ui\": true, \"disable_mlock\": true, \"disable_cache\": true, \"default_lease_ttl\": \"168h\", \"max_lease_ttl\": \"720h\"}"
+            }
+        ],
+        "command": [
+            "server"
+        ]
+    },
+    {
+        "type": 1,
+        "title": "Portainer CE",
+        "name": "portainer",
+        "description": "Portainer is a centralized multi-cluster container management platform. With an intuitive UI, codified best practices, and cloud-native design templates, Portainer reduces the operational complexity of multi-cluster container management.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/portainer-logo.png",
+        "image": "portainer/portainer-ce:2.11.1",
+        "categories": [
+            "Container Management"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "WebUI": "8000:8000/tcp",
+                "HTTPS WebUI": "9443:9443/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/var/run/docker.sock",
+                "bind": "/var/run/docker.sock"
+            },
+            {
+                "container": "/data",
+                "bind": "!data/portainer/data"
+            }
+        ],
+        "cap_add": [
+            "ALL"
+        ]
+    },
+    {
+        "type": 1,
+        "title": "Jenkins",
+        "name": "jenkins",
+        "description": "The leading open source automation server, Jenkins provides hundreds of plugins to support building, deploying and automating any project.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/jenkins-logo.png",
+        "image": "jenkins/jenkins:lts-jdk11",
+        "categories": [
+            "Pipelines",
+            "CI/CD"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "Inbound": "50000:50000/tcp",
+                "WebUI": "8080:8080/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/var/jenkins_home",
+                "bind": "jenkins_home"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "Gitlab CE",
+        "name": "gitlab",
+        "description": "GitLab helps you automate the builds, integration, and verification of your code. With SAST, DAST, code quality analysis, plus pipelines that enable concurrent testing and parallel execution, your teams get quick insights about every commit so they can deliver higher quality code faster.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/gitlab-logo.png",
+        "image": "gitlab/gitlab-ce:latest",
+        "categories": [
+            "Git",
+            "Source Control"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "WebUI": "8880:80/tcp",
+                "HTTPS WebUI": "4443:443/tcp",
+                "SSH": "2224:22/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/etc/gitlab",
+                "bind": "!config/gitlab/config"
+            },
+            {
+                "container": "/var/log/gitlab",
+                "bind": "!logs/gitlab/logs"
+            },
+            {
+                "container": "/var/opt/gitlab",
+                "bind": "!data/gitlab/data"
+            }
+        ],
+        "env": [
+            {
+                "name": "GITLAB_OMNIBUS_CONFIG",
+                "label": "GITLAB_OMNIBUS_CONFIG",
+                "description": "You can pre-configure the GitLab Docker image by adding the environment variable GITLAB_OMNIBUS_CONFIG to Docker run command. This variable can contain any gitlab.rb setting and is evaluated before the loading of the container's gitlab.rb file.",
+                "default": "gitlab_rails['gitlab_shell_ssh_port'] = 2224"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "Docker Registry",
+        "name": "docker_registry",
+        "description": "The Registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images. The Registry is open-source, under the permissive Apache license.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/docker_registry-logo.png",
+        "image": "registry:2",
+        "categories": [
+            "Registry"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "Registry": "5000:5000/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/var/lib/registry",
+                "bind": "!data/docker_registry"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "Pi-hole",
+        "name": "pihole",
+        "description": "Pi-hole is a Linux network-level advertisement and Internet tracker blocking application which acts as a DNS sinkhole and optionally a DHCP server, intended for use on a private network. It is designed for low-power embedded devices with network capability, such as the Raspberry Pi, but supports any Linux machines.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/pihole-logo.png",
+        "image": "pihole/pihole:latest",
+        "categories": [
+            "DNS",
+            "DHCP",
+            "Ads Block"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "DNS TCP": "53:53/tcp",
+                "DNS UDP": "53:53/udp",
+                "DHCP": "67:67/udp",
+                "WebUI": ":80/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/etc/pihole",
+                "bind": "!config/pihole/etc-pihole"
+            },
+            {
+                "container": "/etc/dnsmasq.d",
+                "bind": "!config/pihole/etc-dnsmasq.d"
+            }
+        ],
+        "cap_add": [
+            "NET_ADMIN"
+        ],
+        "env": [
+            {
+                "name": "TZ",
+                "label": "TZ",
+                "description": "Time zone",
+                "default": "America/Chicago"
+            },
+            {
+                "name": "WEBPASSWORD",
+                "label": "WEBPASSWORD",
+                "description": "set a secure password here or it will be random",
+                "default": "P@$$w0rd"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "HEIMDALL",
+        "name": "heimdall",
+        "description": "As the name suggests Heimdall Application Dashboard is a dashboard for all your web applications. It doesn't need to be limited to applications though, you can add links to anything you like.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/heimdall-logo.png",
+        "image": "lscr.io/linuxserver/heimdall:latest",
+        "categories": [
+            "Dashboard"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "WebUI": "80:80/tcp",
+                "HTTPS WebUI": "443:443/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/config",
+                "bind": "!config/heimdall"
+            }
+        ],
+        "env": [
+            {
+                "name": "PUID",
+                "label": "PUID",
+                "default": "!PUID"
+            },
+            {
+                "name": "PGID",
+                "label": "PGID",
+                "default": "!PGID"
+            },
+            {
+                "name": "TZ",
+                "label": "TZ",
+                "description": "Time zone",
+                "default": "America/Chicago"
+            }
+          ]
+    },
+    {
+        "type": 1,
+        "title": "PostgreSQL",
+        "name": "postgres",
+        "description": "PostgreSQL, often simply \"Postgres\", is an object-relational database management system (ORDBMS) with an emphasis on extensibility and standards-compliance.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/postgres_logo.png",
+        "image": "postgres:latest",
+        "categories": [
+            "Database"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "Database": "5432:5432/tcp"
+            }
+        ],
+        "env": [
+            {
+                "name": "POSTGRES_USER",
+                "label": "POSTGRES_USER",
+                "description": "This optional environment variable is used in conjunction with POSTGRES_PASSWORD to set a user and its password.",
+                "default": "postgres"
+            },
+            {
+                "name": "POSTGRES_PASSWORD",
+                "label": "POSTGRES_PASSWORD",
+                "description": "This environment variable is required for you to use the PostgreSQL image. It must not be empty or undefined. This environment variable sets the superuser password for PostgreSQL.",
+                "default": "P@$$w0rd"
+            },
+            {
+                "name": "POSTGRES_DB",
+                "label": "POSTGRES_DB",
+                "description": "This optional environment variable can be used to define a different name for the default database that is created when the image is first started.",
+                "default": "postgres"
+            }
+          ],
+        "volumes": [
+            {
+                "container": "/var/lib/postgresql/data",
+                "bind": "!data/postgresql"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "pgAdmin 4",
+        "name": "pgadmin",
+        "description": "pgAdmin is the most popular and feature rich Open Source administration and development platform for PostgreSQL, the most advanced Open Source database in the world.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/pgadmin4-logo.png",
+        "image": "dpage/pgadmin4:latest",
+        "categories": [
+            "Administration",
+            "Development Platform"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "WebUI": ":80/tcp"
+            }
+        ],
+        "env": [
+            {
+                "name": "PGADMIN_DEFAULT_EMAIL",
+                "label": "PGADMIN_DEFAULT_EMAIL",
+                "description": "This is the email address used when setting up the initial administrator account to login to pgAdmin. This variable is required and must be set at launch time.",
+                "default": "pgadmin@example.com"
+            },
+            {
+                "name": "PGADMIN_DEFAULT_PASSWORD",
+                "label": "PGADMIN_DEFAULT_PASSWORD",
+                "description": "This is the password used when setting up the initial administrator account to login to pgAdmin. This variable is required and must be set at launch time.",
+                "default": "P@$$w0rd"
+            }
+          ],
+          "volumes": [
+            {
+                "container": "/var/lib/pgadmin",
+                "bind": "pgadmin"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "DVWA",
+        "name": "dvwa",
+        "description": "Damn Vulnerable Web App (DVWA) is a PHP/MySQL web application that is damn vulnerable. Its main goals are to be an aid for security professionals to test their skills and tools in a legal environment, help web developers better understand the processes of securing web applications and aid teachers/students to teach/learn web application security in a class room environment.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/dvwa-logo.png",
+        "image": "vulnerables/web-dvwa:latest",
+        "categories": [
+            "Cybersecurity"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "WebUI": ":80/tcp"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "CoreDNS",
+        "name": "coredns",
+        "description": "CoreDNS is a DNS server. It is written in Go. It can be used in a multitude of environments because of its flexibility.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/coredns-logo.png",
+        "image": "coredns/coredns:latest",
+        "categories": [
+            "DNS"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "DNS TCP": "53:53/tcp",
+                "DNS UDP": "53:53/udp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/root",
+                "bind": "!config/coredns"
+            }
+        ],
+        "command": [
+            "-conf=/root/Corefile"
+        ]
+    },
+    {
+        "type": 1,
+        "title": "NGINX",
+        "name": "nginx",
+        "description": "nginx [engine x] is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server, originally written by Igor Sysoev.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/nginx-logo.png",
+        "image": "nginx:latest",
+        "categories": [
+            "Proxy",
+            "Load Balancer",
+            "Reverse Proxy"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "HTTP": "80:80/tcp",
+                "HTTPS": "443:443/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/etc/nginx",
+                "bind": "!config/nginx"
+            },
+            {
+                "container": "/usr/share/nginx/html",
+                "bind": "!data/nginx"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "NGINX Proxy Manager",
+        "name": "nginx-proxy-manager",
+        "description": "",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/nginx_proxy_manager-logo.png",
+        "image": "jc21/nginx-proxy-manager:latest",
+        "categories": [
+            "Proxy",
+            "Load Balancer",
+            "Reverse Proxy"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "HTTP": "80:80/tcp",
+                "WebUI": "81:81/tcp",
+                "HTTPS": "443:443/tcp"
+            }
+        ],
+        "volumes": [
+            {
+                "container": "/data",
+                "bind": "!data/nginx_proxy_manager"
+            },
+            {
+                "container": "/etc/letsencrypt",
+                "bind": "!data/letsencrypt"
+            }
+        ],
+        "env": [
+            {
+                "name": "DB_SQLITE_FILE",
+                "label": "DB_SQLITE_FILE",
+                "description": "Change the location of the SQLite DB file within the container.",
+                "default": "/data/database.sqlite"
+            },
+            {
+                "name": "DISABLE_IPV6",
+                "label": "DISABLE_IPV6",
+                "description": "Disable IPv6 if IPv6 is not enabled on your host.",
+                "default": "true"
+            }
+          ]
+    },
+    {
+        "type": 1,
+        "title": "Nextcloud",
+        "name": "nextcloud",
+        "description": "Nextcloud is a suite of client-server software for creating and using file hosting services. It is enterprise-ready with comprehensive support options. Being free and open-source software, anyone is allowed to install and operate it on their own private server devices.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/nextcloud-logo.svg",
+        "image": "nextcloud:latest",
+        "categories": [
+            "Productivity"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+            {
+                "HTTP": ":80/tcp"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "Code Server",
+        "name": "code-server",
+        "description": "Code-server is VS Code running on a remote server, accessible through the browser.",
+        "logo": "https://raw.githubusercontent.com/SelfhostedPro/selfhosted_templates/master/Images/code-server.png",
+        "image": "lscr.io/linuxserver/code-server:latest",
+        "categories": [
+          "Other",
+          "Tools"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+          {
+            "WebUI": "8443:8443/tcp"
+          }
+        ],
+        "env": [
+          {
+            "name": "PUID",
+            "label": "PUID",
+            "default": "!PUID"
+          },
+          {
+            "name": "GUID",
+            "label": "PGID",
+            "default": "!PGID"
+          },
+          {
+            "name": "TZ",
+            "label": "TZ",
+            "description": "Time zone",
+            "default": "America/Chicago"
+          },
+          {
+            "name": "PASSWORD",
+            "label": "PASSWORD"
+          },
+          {
+              "name": "HASHED_PASSWORD",
+              "label": "HASHED_PASSWORD"
+          },
+          {
+            "name": "SUDO_PASSWORD",
+            "label": "SUDO_PASSWORD"
+          },
+          {
+              "name": "SUDO_PASSWORD_HASH",
+              "label": "SUDO_PASSWORD_HASH"
+          },
+          {
+            "name": "PROXY_DOMAIN",
+            "label": "PROXY_DOMAIN",
+            "default": "example.my.domain"
+          },
+          {
+              "name": "DEFAULT_WORKSPACE",
+              "label": "DEFAULT_WORKSPACE",
+              "default": "/config/workspace"
+          }
+        ],
+        "volumes": [
+          {
+            "container": "/config",
+            "bind": "!config/Code-Server"
+          }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "File Browser",
+        "name": "filebrowser",
+        "description": "FileBrowser is a free, open-source, self-hosted web application for managing files and folders.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/file_browser-logo.png",
+        "image": "filebrowser/filebrowser:s6",
+        "categories": [
+          "File Utility",
+          "Administration Tool"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+          {
+            "WebUI": "8002:80/tcp"
+          }
+        ],
+        "volumes": [
+            {
+                "container": "/config",
+                "bind": "FileBrowser_Config"
+            },
+            {
+                "container": "/srv",
+                "bind": "FileBrowser_Srv"
+            },
+            {
+                "container": "/database",
+                "bind": "FileBrowser_Database"
+            },
+            {
+                "container": "/myfiles",
+                "bind": "!config"
+            }
+          ],
+        "env": [
+            {
+                "name": "PUID",
+                "label": "PUID",
+                "default": "!PUID"
+            },
+            {
+                "name": "GUID",
+                "label": "PGID",
+                "default": "!PGID"
+            }
+        ]
+    },
+    {
+        "type": 1,
+        "title": "Joplin",
+        "name": "joplin",
+        "description": "Joplin is an open source note-taking app. Capture your thoughts and securely access them from any device.",
+        "logo": "https://raw.githubusercontent.com/vsantiago113/yacht_templates/main/logos/joplin-logo.png",
+        "image": "joplin/server:latest",
+        "categories": [
+          "Productivity",
+          "Notes"
+        ],
+        "platform": "linux",
+        "restart_policy": "unless-stopped",
+        "ports": [
+          {
+            "WebUI": "22300:22300/tcp"
+          }
+        ]
+    }
+]
